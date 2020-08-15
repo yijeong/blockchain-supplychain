@@ -1,0 +1,229 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description:     >
+  This template creates a VPC, VPC Endpoint, IAM Role, Security Group, EC2, ELB for Amazon Managed Blockchain Lab. 
+  The created EC2 will function as Fabric Client and REST API server. 
+  The created ELB will function as a single endpoint when there are multi clients for high availabiliy. 
+  
+Parameters:
+  KeyName:
+    Type: AWS::EC2::KeyPair::KeyName
+    Description: Name of an existing EC2 KeyPair to enable SSH access to the instances
+
+  BlockchainVpcEndpointServiceName:
+    Type: String
+    Description: Name of the Blockchain VPC Endpoint
+ 
+     
+Resources:
+
+# 1. VPC setting 
+
+  BlockchainWorkshopVPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: 10.0.0.0/16
+      EnableDnsSupport: True
+      EnableDnsHostnames: True
+      InstanceTenancy: default
+      Tags:
+      - Key: Name
+        Value: vpc-amblab
+ 
+  BlockchainWorkshopPublicSubnet:
+    Type: AWS::EC2::Subnet
+    Properties:
+        VpcId: !Ref BlockchainWorkshopVPC
+        MapPublicIpOnLaunch: false
+        CidrBlock: 10.0.0.0/16
+        Tags:
+        - Key: Name
+          Value: sb-amblab
+ 
+  BlockchainWorkshopInternetGateway:
+    Type: "AWS::EC2::InternetGateway"
+    Properties:
+      Tags:
+      - Key: Name
+        Value: igw-amblab
+ 
+  BlockchainWorkshopAttachGateway:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+       VpcId: !Ref BlockchainWorkshopVPC
+       InternetGatewayId: !Ref BlockchainWorkshopInternetGateway
+ 
+  BlockchainWorkshopRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+        VpcId: !Ref BlockchainWorkshopVPC
+        Tags:
+          - Key: Name
+            Value: rt-amblab
+ 
+  BlockchainWorkshopRoute:
+    Type: AWS::EC2::Route
+    Properties:
+        RouteTableId: !Ref BlockchainWorkshopRouteTable
+        DestinationCidrBlock: 0.0.0.0/0
+        GatewayId: !Ref BlockchainWorkshopInternetGateway
+ 
+  BlockchainWorkshopSubnetRouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+        SubnetId: !Ref BlockchainWorkshopPublicSubnet
+        RouteTableId: !Ref BlockchainWorkshopRouteTable
+ 
+  BlockchainWorkshopVPCEndpoint:
+    Type: AWS::EC2::VPCEndpoint
+    Properties:
+        VpcId: !Ref BlockchainWorkshopVPC
+        PrivateDnsEnabled: True
+        ServiceName: !Ref BlockchainVpcEndpointServiceName
+        VpcEndpointType: Interface
+        SubnetIds: 
+        - !Ref BlockchainWorkshopPublicSubnet
+        SecurityGroupIds: 
+        - !Ref BlockchainWorkshopSGBase
+
+
+
+# 2. IAM Role 
+
+  BlockchainWorkshopRootRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          -
+            Effect: "Allow"
+            Principal:
+              Service:
+              - "ec2.amazonaws.com"
+            Action:
+              - "sts:AssumeRole"
+      Path: "/"
+      MaxSessionDuration: 10800
+      Policies:
+        -
+          PolicyName: "root"
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              -
+                Effect: "Allow"
+                Action: "*"
+                Resource: "*"
+ 
+  BlockchainWorkshopRootInstanceProfile:
+    Type: "AWS::IAM::InstanceProfile"
+    Properties:
+      Path: "/"
+      Roles:
+        -
+          Ref: "BlockchainWorkshopRootRole"
+ 
+# 3. Security Group
+
+  BlockchainWorkshopSGBase:
+        Type: AWS::EC2::SecurityGroup
+        Properties:
+          GroupDescription: AMB Lab Security Group for ELB and VPC Endpoint 
+          VpcId: !Ref BlockchainWorkshopVPC
+          SecurityGroupIngress:
+          - IpProtocol: tcp
+            CidrIp: 0.0.0.0/0
+            FromPort: 0
+            ToPort: 65535
+          Tags:
+          - Key: Name
+            Value: secg-amblab-base
+
+  BlockchainWorkshopSGEC2:
+        Type: AWS::EC2::SecurityGroup
+        Properties:
+          GroupDescription: AMB Lab Security Group for EC2 
+          VpcId: !Ref BlockchainWorkshopVPC
+          SecurityGroupIngress:
+          - IpProtocol: tcp
+            CidrIp: 0.0.0.0/0
+            FromPort: 22
+            ToPort: 22
+          Tags:
+          - Key: Name
+            Value: secg-amblab-ec2
+ 
+  BlockchainWorkshopSGEC2Ingress1:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      IpProtocol: -1
+      FromPort: -1
+      ToPort: -1
+      GroupId: !GetAtt BlockchainWorkshopSGEC2.GroupId
+      SourceSecurityGroupId: !GetAtt BlockchainWorkshopSGBase.GroupId
+
+
+# 4. EC2 & ELB 
+
+  BlockchainWorkshopELB:
+    Type: AWS::ElasticLoadBalancing::LoadBalancer
+    Properties:
+      SecurityGroups:
+      - !Ref BlockchainWorkshopSGBase
+      Subnets: 
+      - !Ref BlockchainWorkshopPublicSubnet
+      Instances:
+      - !Ref BlockchainWorkshopEC2
+      Listeners:
+      - LoadBalancerPort: '80'
+        InstancePort: '3000'
+        Protocol: TCP
+      HealthCheck:
+        Target: HTTP:3000/health
+        HealthyThreshold: '3'
+        UnhealthyThreshold: '5'
+        Interval: '10'
+        Timeout: '5'
+      Tags:
+        - Key: Name
+          Value: elb-amblab
+
+
+  BlockchainWorkshopEC2:
+    Type: AWS::EC2::Instance
+    Properties:
+        KeyName: !Ref KeyName
+        ImageId: 'ami-0434d5878c6ad6d4c'
+        InstanceType: 't2.small'
+        IamInstanceProfile: !Ref BlockchainWorkshopRootInstanceProfile
+        NetworkInterfaces:
+        - AssociatePublicIpAddress: true
+          DeviceIndex: 0
+          GroupSet: 
+          - !Ref BlockchainWorkshopSGEC2
+          SubnetId: !Ref BlockchainWorkshopPublicSubnet
+        Tags:
+          - Key: Name
+            Value: ec2-amblab-client
+ 
+
+ 
+Outputs:
+  VPCID:
+    Description: VPC ID
+    Value:
+      !Ref BlockchainWorkshopVPC
+  EC2URL:
+    Description: Public DNS of the EC2 instance
+    Value:
+      !GetAtt BlockchainWorkshopEC2.PublicDnsName
+  ELBDNS:
+    Description: Public DNS of the ELB
+    Value:
+      !GetAtt BlockchainWorkshopELB.DNSName
+  BlockchainVPCEndpoint:
+    Description: VPC Endpoint ID
+    Value:
+      !Ref BlockchainWorkshopVPCEndpoint
+
+

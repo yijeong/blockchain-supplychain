@@ -1,0 +1,333 @@
+h1{
+  text-align: center
+}
+
+body {
+  font-family: 'Open Sans', sans-serif;
+  color: #404040;
+  background-color: #FF9900;
+}
+
+.container {
+  position: relative;
+  text-align: center;
+  margin-top: 20px;
+}
+
+form {
+  margin: 0 auto;
+ 
+}
+
+.section {
+  margin-top: 280px;
+  float: middle;
+  width: 100%
+}
+
+.img{
+  display: block;
+  margin-left: auto;
+  margin-top: 60px;
+  margin-right: auto;
+  margin-bottom : -260px;
+}
+
+.imgfinal{
+  position: absolute;
+  margin-left: auto;
+  margin-right: auto;
+  top: 100px;
+  width :700px;
+}
+
+.logoimg {
+  width : 90px;
+  margin-bottom : -60px;
+}
+
+
+
+.profile-pic-device {
+  background: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRHIK4qDQFTR636IF3jgh0zclxM76YUcVB80eYqgKsFcpHqG7YI') no-repeat 60% 20%;
+  background-size: cover;
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  border: 4px solid #fff;
+  margin: 0 auto;
+  position: relative;
+  top: 60px;
+}
+
+.profile-pic-manu {
+  background: url('https://image.freepik.com/free-icon/factory_318-10162.jpg') no-repeat 60% 20%;
+  background-size: cover;
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  border: 4px solid #fff;
+  margin: 0 auto;
+  position: relative;
+  top: 60px;
+}
+
+.profile-pic-retailer {
+  background: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR1HNVDdL5RvU7AprbEhCTL3tdnzJx5QRNoeTu1JpgmLPXXKXrd') no-repeat 60% 20%;
+  background-size: cover;
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  border: 4px solid #fff;
+  margin: 0 auto;
+  position: relative;
+  top: 60px;
+}
+
+.profile-pic-truck {
+  background: url('https://image.freepik.com/iconos-gratis/camion_318-10147.jpg') no-repeat 60% 20%;
+  background-size: cover;
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  border: 4px solid #fff;
+  margin: 0 auto;
+  position: relative;
+  top: 60px;
+  
+}
+
+textarea {
+  width: 400px;
+  height: 200px;
+  border-radius: 15px;
+  border: none;
+  padding: 15px;
+  padding-top: 75px;
+  text-align: center;
+  outline: none;
+  font-size: 15px;
+  z-index : 2;
+
+}
+
+table{
+  margin-top :-150px;
+  margin-bottom: 75px;
+  margin-right: auto;
+  margin-left: auto;
+  font-size: 15px; 
+  z-index : 1;
+  position: relative;
+
+}
+
+
+.button-group {
+  margin: 10px;
+}
+
+.btn-primary {
+  text-decoration: none;
+  border-radius: 12px;
+  padding: 1px 15px;
+  background: #404040;
+  color: #fff;
+  border : #404040;
+}
+
+.btn-secondary{
+  text-decoration: none;
+  border-radius:12px;
+  padding: 1px 15px;
+  background: #9b9a9a;
+  color: #fff;
+  border : #9b9a9a;
+  cursor: not-allowed;
+}
+
+.counter {
+  display: inline;
+  margin-right: 10px;
+  color: #fff; 
+  background: #333;
+  padding: 5px 10px;
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+.modal-open {
+  overflow: hidden;
+}
+.modal {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 1040;
+  display: none;
+  overflow: hidden;
+  -webkit-overflow-scrolling: touch;
+  outline: 0;
+}
+.modal.fade .modal-dialog {
+  -webkit-transition: -webkit-transform .3s ease-out;
+       -o-transition:      -o-transform .3s ease-out;
+          transition:         transform .3s ease-out;
+  -webkit-transform: translate(0, -25%);
+      -ms-transform: translate(0, -25%);
+       -o-transform: translate(0, -25%);
+          transform: translate(0, -25%);
+}
+.modal.in .modal-dialog {
+  -webkit-transform: translate(0, 0);
+      -ms-transform: translate(0, 0);
+       -o-transform: translate(0, 0);
+          transform: translate(0, 0);
+}
+.modal-open .modal {
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+.modal-dialog {
+  position: relative;
+  width: auto;
+  margin: 10px;
+}
+.modal-content {
+  position: relative;
+  top : 300px;
+  background-color: #fff;
+  -webkit-background-clip: padding-box;
+          background-clip: padding-box;
+  border: 1px solid #999;
+  border: 1px solid rgba(0, 0, 0, .2);
+  border-radius: 6px;
+  outline: 0;
+  -webkit-box-shadow: 0 3px 9px rgba(0, 0, 0, .5);
+          box-shadow: 0 3px 9px rgba(0, 0, 0, .5);
+}
+.modal-backdrop {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  background-color: #000;
+}
+.modal-backdrop.fade {
+  filter: alpha(opacity=0);
+  opacity: 0;
+}
+.modal-backdrop.in {
+  filter: alpha(opacity=50);
+  opacity: .5;
+}
+.modal-header {
+  min-height: 16.42857143px;
+  padding: 15px;
+  border-bottom: 1px solid #e5e5e5;
+}
+.modal-header .close {
+  margin-top: -2px;
+}
+.modal-title {
+  margin: 0;
+  line-height: 1.42857143;
+}
+.modal-body {
+  position: relative;
+  padding: 15px;
+}
+.modal-footer {
+  padding: 15px;
+  text-align: right;
+  border-top: 1px solid #e5e5e5;
+}
+.modal-footer .btn + .btn {
+  margin-bottom: 0;
+  margin-left: 5px;
+}
+.modal-footer .btn-group .btn + .btn {
+  margin-left: -1px;
+}
+.modal-footer .btn-block + .btn-block {
+  margin-left: 0;
+}
+.modal-scrollbar-measure {
+  position: absolute;
+  top: -9999px;
+  width: 50px;
+  height: 50px;
+  overflow: scroll;
+}
+@media (min-width: 768px) {
+  .modal-dialog {
+    width: 600px;
+    margin: 30px auto;
+  }
+  .modal-content {
+    -webkit-box-shadow: 0 5px 15px rgba(0, 0, 0, .5);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, .5);
+  }
+  .modal-sm {
+    width: 300px;
+  }
+}
+@media (min-width: 992px) {
+  .modal-lg {
+    width: 900px;
+  }
+}
+
+
+
+#devicemask {  
+  position:absolute;  
+  left:0;
+  top:0;
+  z-index:9000;  
+  background-color:rgba(0, 0, 0, 0.95);  
+  display:none;  
+}
+
+#manmask {  
+  position:absolute;  
+  left:0;
+  top:0;
+  z-index:9000;  
+  background-color:rgba(0, 0, 0, 0.95);  
+  display:none;  
+}
+
+#truckmask {  
+  position:absolute;  
+  left:0;
+  top:0;
+  z-index:9000;  
+  background-color:rgba(0, 0, 0, 0.95);  
+  display:none;  
+}
+
+#retailermask {  
+  position:absolute;  
+  left:0;
+  top:0;
+  z-index:9000;  
+  background-color:rgba(0, 0, 0, 0.95);  
+  display:none;  
+}
+
+
+
+
